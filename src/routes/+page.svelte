@@ -1,5 +1,8 @@
 <script>
-    import Table from "../components/table/Table.svelte";
+    import DatePicker from "../components/date-picker/DatePicker.svelte";
+
 </script>
 
-<Table></Table>
+<DatePicker></DatePicker>
+
+<DatePicker></DatePicker>
