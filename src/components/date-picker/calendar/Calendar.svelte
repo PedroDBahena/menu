@@ -8,6 +8,10 @@
 
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
+    let currentDays = 0;
+    let daysOfCalendar = Array(7)
+        .fill(null)
+        .map(() => []);
 
     export let months;
     export let daysOfWeek;
@@ -19,6 +23,8 @@
             currentMonth = 0;
             increaseYear();
         }
+
+        getTotalDays();
     }
 
     function decreaseMonth() {
@@ -28,15 +34,38 @@
             currentMonth = 11;
             decreaseYear();
         }
+
+        getTotalDays();
     }
 
     function increaseYear() {
         currentYear++;
+        getTotalDays();
     }
 
     function decreaseYear() {
         currentYear--;
+        getTotalDays();
     }
+
+    function getTotalDays() {
+        currentDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    }
+
+    function fillCalendar() {
+        for (let i = 1; i <= currentDays; i++) {
+            const dayOfWeek = new Date(currentYear, currentMonth, i)?.getDay();
+
+            daysOfCalendar[dayOfWeek].push(i);
+        }
+    }
+
+    onMount(() => {
+        getTotalDays();
+        daysOfCalendar = daysOfWeek.map((day) => [day, []]);
+        fillCalendar();
+        console.warn(daysOfCalendar);
+    });
 </script>
 
 <div id="calendar">
@@ -60,10 +89,21 @@
         </button>
     </div>
 
-    <div class="days-of-week">
+    <div class="week">
         {#each daysOfWeek as day}
             <p>{day}</p>
         {/each}
-        <p></p>
+    </div>
+
+
+    <div class="days-of-week">
+
+        {#each daysOfCalendar as [day, empty, ...days], index}
+            <div class="day-container">
+                {#each days as dayNumber}
+                    <span>{dayNumber}</span>
+                {/each}
+            </div>
+        {/each}
     </div>
 </div>
