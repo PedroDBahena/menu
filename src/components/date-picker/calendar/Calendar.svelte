@@ -25,6 +25,7 @@
         }
 
         getTotalDays();
+        fillCalendar();
     }
 
     function decreaseMonth() {
@@ -36,16 +37,19 @@
         }
 
         getTotalDays();
+        fillCalendar();
     }
 
     function increaseYear() {
         currentYear++;
         getTotalDays();
+        fillCalendar();
     }
 
     function decreaseYear() {
         currentYear--;
         getTotalDays();
+        fillCalendar();
     }
 
     function getTotalDays() {
@@ -53,18 +57,78 @@
     }
 
     function fillCalendar() {
+        daysOfCalendar = daysOfWeek.map((day) => [day, []]);
+
+        console.warn('daysOfCalendar', daysOfCalendar);
+        
         for (let i = 1; i <= currentDays; i++) {
             const dayOfWeek = new Date(currentYear, currentMonth, i)?.getDay();
 
-            daysOfCalendar[dayOfWeek].push(i);
+            daysOfCalendar[dayOfWeek][1]?.push(i);
         }
+        
+        daysOfCalendar = completeDays(daysOfCalendar);
+    }
+
+    function completeDays(days) {
+        days.forEach((item, index) => {
+            const length = item[1]?.length;
+            if (length === 4) {
+                item[1]?.unshift(getDaysByWeekAndMonth(index, true));
+                item[1]?.push(getDaysByWeekAndMonth(index, false));
+            } else if (length === 5) {
+                item[1]?.push(getDaysByWeekAndMonth(index, false));
+            }
+        });
+
+        return days;
+    }
+
+    function getDaysByWeekAndMonth(dayIndex, isPreviousMonth) {
+        let month = currentMonth;
+        let year = currentYear;
+        let initialDay = 1;
+
+        if (isPreviousMonth) {
+            month = isPreviousMonth
+                ? month === 0
+                    ? 12
+                    : month - 1
+                : month + 1;
+
+            if(month === 12) {
+                year = currentYear - 1;
+                initialDay = 0;
+            }
+        } else {
+            month = month + 1;
+        }
+
+        let date = new Date(year, month, initialDay);
+
+        while (date.getDay() !== dayIndex) {
+            if(isPreviousMonth) {
+                date.setDate(date.getDate() - 1);
+            } else {
+                date.setDate(date.getDate() + 1);
+            }
+            
+        }
+
+        while (date.getMonth() === currentMonth) {
+            if(isPreviousMonth) {
+                date.setDate(date.getDate() - 7);
+            } else {
+                date.setDate(date.getDate() + 7);
+            }
+        }
+
+        return date?.getDate();
     }
 
     onMount(() => {
         getTotalDays();
-        daysOfCalendar = daysOfWeek.map((day) => [day, []]);
         fillCalendar();
-        console.warn(daysOfCalendar);
     });
 </script>
 
@@ -95,13 +159,11 @@
         {/each}
     </div>
 
-
     <div class="days-of-week">
-
-        {#each daysOfCalendar as [day, empty, ...days], index}
+        {#each daysOfCalendar as [day, numbers], index}
             <div class="day-container">
-                {#each days as dayNumber}
-                    <span>{dayNumber}</span>
+                {#each numbers as number}
+                    <span>{number}</span>
                 {/each}
             </div>
         {/each}
