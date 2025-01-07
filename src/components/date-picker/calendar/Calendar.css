@@ -39,14 +39,39 @@
   & > .days-of-week {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    row-gap: 0.5rem;
 
     & > .week {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      row-gap: 0.75rem;
+      row-gap: 0.5rem;
       justify-content: center;
       text-align: center;
+
+      & > span {
+        display: inline-block;
+        width: 40px; /* Tamaño del día */
+        height: 40px; /* Tamaño del día */
+        line-height: 40px; /* Centrar texto verticalmente */
+        text-align: center; /* Centrar texto horizontalmente */
+        border-radius: 50%; /* Forma circular */
+        transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Transición suave */
+
+        &.gray {
+          color: #c1c1c1;
+        }
+
+        &:hover {
+          color: inherit; /* Mantener color original */
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra al pasar el puntero */
+          background-color: rgba(
+            0,
+            0,
+            0,
+            0.05
+          ); /* Fondo sutil al hacer hover */
+        }
+      }
     }
   }
 }

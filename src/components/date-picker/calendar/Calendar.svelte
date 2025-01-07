@@ -54,7 +54,6 @@
   function generateCalendar() {
     getTotalDays();
     daysByWeek = fillWeeks();
-    console.warn(daysByWeek);
   }
 
   function getCurrentMonthRange() {
@@ -70,7 +69,7 @@
   function generatePreviousOrNextDays(count, getPrevMonthDays) {
     const adjustedDay = getPrevMonthDays ? 0 : 1;
     let month = getPrevMonthDays ? currentMonth - 1 : currentMonth;
-    month = month < 0 ? 12 : month;
+    month = month < 0 ? 12 : month + 1;
     let year = month == 12 ? currentYear - 1 : currentYear;
 
     const initialDay = new Date(year, month, adjustedDay);
@@ -78,21 +77,14 @@
     const days = [];
 
     if (getPrevMonthDays) {
-      for (let i = count - 1; i >= 0; i--) {
-        const day = new Date(
-          year,
-          month < 0 ? 11 : month,
-          initialDay?.getDate() - i
-        );
+      for (let i = count -1 ; i >= 0; i--) {
+        const day = new Date(initialDay);
+        day.setDate(initialDay.getDate() - i);
         days?.push(day?.getDate());
       }
     } else {
       for (let i = 0; i < count; i++) {
-        const day = new Date(
-          year,
-          month < 0 ? 11 : month,
-          initialDay?.getDate() + i
-        );
+        const day = new Date(year, month, initialDay?.getDate() + i);
         days?.push(day?.getDate());
       }
     }
@@ -102,27 +94,37 @@
 
   function fillWeeks() {
     let days = [[], [], [], [], [], []];
+
     const monthRange = getCurrentMonthRange();
 
-    // DOCS: Obtiene los últimos días del mes y los agrega a la primer semana del mes actual
+    // DOCS: Obtiene los últimos días del mes anterior y los agrega a la primer semana del mes actual
+    const previousOrNextDaysrevious = generatePreviousOrNextDays(
+      monthRange.firstDay,
+      true
+    );
+
     days[0].push(
-      ...generatePreviousOrNextDays(monthRange.firstDay, true)
+      ...previousOrNextDaysrevious.map((day) => ({
+        day,
+        isCurrentMonth: false,
+      }))
     );
 
     const firstDays = days[0]?.length;
 
     let countWeeks = 1;
 
+    // DOCS: Itera los días del mes actual
     for (let i = 1; i <= currentDays; i++) {
       if (i <= 7 - firstDays) {
         // DOCS: Guarda los días de la primer semana, incluyendo los últimos días del mes anterior
-        days[0]?.push(i);
+        days[0]?.push({ day: i, isCurrentMonth: true });
       } else {
         // DOCS: Guarda el resto de los días por semana
         countWeeks =
           days[countWeeks]?.length === 7 ? countWeeks + 1 : countWeeks;
 
-        days[countWeeks]?.push(i);
+        days[countWeeks]?.push({ day: i, isCurrentMonth: true });
       }
     }
 
@@ -145,12 +147,17 @@
     // DOCS: Obtiene los primeros días del mes siguiente
     const nextMonthDays = generatePreviousOrNextDays(neededDays, false);
 
-    // DOCS: Acompleta las semanas incompletas
+    // DOCS: Llena las semanas incompletas
     for (let i = 0; i < incompleteWeeks?.length; i++) {
       const index = incompleteWeeks[i]?.index;
       const missingDays = 7 - days[index]?.length;
 
-      days[index].push(...nextMonthDays.slice(0, missingDays));
+      const newDays = nextMonthDays.slice(0, missingDays);
+
+      days[index].push(
+        ...newDays.map((day) => ({ day, isCurrentMonth: false }))
+      );
+
       nextMonthDays?.splice(0, missingDays);
     }
 
@@ -193,8 +200,8 @@
   <div class="days-of-week">
     {#each daysByWeek as week}
       <div class="week">
-        {#each week as day}
-          <span>{day}</span>
+        {#each week as { day, isCurrentMonth }}
+          <span class={`${!isCurrentMonth ? "gray" : ""}`}>{day}</span>
         {/each}
       </div>
     {/each}
