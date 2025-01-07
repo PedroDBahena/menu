@@ -1,50 +1,52 @@
 #calendar {
-    box-shadow: 0 .25rem .5rem #1a1a1d33;
-    border: 1px solid #1a1a1d;
-    border-radius: .25rem;
-    position: absolute;
-    background-color: #fff;
-    padding: 0.50rem;
+  box-shadow: 0 0.25rem 0.5rem #1a1a1d33;
+  border: 1px solid #1a1a1d;
+  border-radius: 0.25rem;
+  position: absolute;
+  background-color: #fff;
+  padding: 0.5rem;
 
-    &>.header {
-        display: flex;
-        flex-direction: row;
-        gap: 0.75rem;
-        align-items: center;
-        justify-content: center;
+  & > .header {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: center;
 
-        &>button {
-            all: unset;
-            display: inline-block;
-            padding: 0;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            height: 100%;
+    & > button {
+      all: unset;
+      display: inline-block;
+      padding: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      height: 100%;
 
-            &>img {
-                display: block;
-                width: 1.25rem;
-                height: 1.25rem;
-            }
-        }
+      & > img {
+        display: block;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
     }
+  }
+
+  & > .week {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+  }
+
+  & > .days-of-week {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 
     & > .week {
-        display: flex;
-        flex-direction: row;
-        gap: 0.75rem;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      row-gap: 0.75rem;
+      justify-content: center;
+      text-align: center;
     }
-
-    &>.days-of-week {
-        display: grid;
-        grid-template-columns: repeat(7,1fr);
-        gap: 0.75rem;
-
-        &>.day-container {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-    }
+  }
 }
