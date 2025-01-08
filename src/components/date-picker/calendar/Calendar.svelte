@@ -5,7 +5,6 @@
   import rightArrow from "../../../images/rightArrow.svg";
   import rightSvgrepo from "../../../images/rightSvgrepo.svg";
   import { onMount, tick } from "svelte";
-  import { json } from "@sveltejs/kit";
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
@@ -20,7 +19,7 @@
 
     if (currentMonth > 11) {
       currentMonth = 0;
-      increaseYear();
+      changeYear(true);
     }
 
     generateCalendar();
@@ -31,19 +30,15 @@
 
     if (currentMonth < 0) {
       currentMonth = 11;
-      decreaseYear();
+      changeYear(false);
     }
 
     generateCalendar();
   }
 
-  function increaseYear() {
-    currentYear++;
-    generateCalendar();
-  }
+  function changeYear(isNext) {
+    currentYear = isNext ? currentYear + 1 : currentYear - 1;
 
-  function decreaseYear() {
-    currentYear--;
     generateCalendar();
   }
 
@@ -77,15 +72,15 @@
     const days = [];
 
     if (getPrevMonthDays) {
-      for (let i = count -1 ; i >= 0; i--) {
+      for (let i = count - 1; i >= 0; i--) {
         const day = new Date(initialDay);
         day.setDate(initialDay.getDate() - i);
-        days?.push(day?.getDate());
+        days?.push(day);
       }
     } else {
       for (let i = 0; i < count; i++) {
         const day = new Date(year, month, initialDay?.getDate() + i);
-        days?.push(day?.getDate());
+        days?.push(day);
       }
     }
 
@@ -106,7 +101,8 @@
     days[0].push(
       ...previousOrNextDaysrevious.map((day) => ({
         day,
-        isCurrentMonth: false,
+        isDisabled: true,
+        isSelected: false,
       }))
     );
 
@@ -118,13 +114,21 @@
     for (let i = 1; i <= currentDays; i++) {
       if (i <= 7 - firstDays) {
         // DOCS: Guarda los días de la primer semana, incluyendo los últimos días del mes anterior
-        days[0]?.push({ day: i, isCurrentMonth: true });
+        days[0]?.push({
+          day: new Date(currentYear, currentMonth, i),
+          isDisabled: false,
+          isSelected: false,
+        });
       } else {
         // DOCS: Guarda el resto de los días por semana
         countWeeks =
           days[countWeeks]?.length === 7 ? countWeeks + 1 : countWeeks;
 
-        days[countWeeks]?.push({ day: i, isCurrentMonth: true });
+        days[countWeeks]?.push({
+          day: new Date(currentYear, currentMonth, i),
+          isDisabled: false,
+          isSelected: false,
+        });
       }
     }
 
@@ -155,13 +159,32 @@
       const newDays = nextMonthDays.slice(0, missingDays);
 
       days[index].push(
-        ...newDays.map((day) => ({ day, isCurrentMonth: false }))
+        ...newDays.map((day) => ({ day, isDisabled: true, isSelected: false }))
       );
 
       nextMonthDays?.splice(0, missingDays);
     }
 
     return days;
+  }
+
+  function isCurrentDate(date) {
+    const currentDate = new Date();
+
+    return (
+      date?.getDate() === currentDate?.getDate() &&
+      date?.getMonth() === currentDate?.getMonth() &&
+      date?.getFullYear() === currentDate?.getFullYear()
+    );
+  }
+
+  function setDate(date, index, subIndex) {
+    generateCalendar();
+    daysByWeek[index][subIndex] = {
+      day: date,
+      isDisabled: false,
+      isSelected: true,
+    };
   }
 
   onMount(async () => {
@@ -172,7 +195,7 @@
 
 <div id="calendar">
   <div class="header">
-    <button on:click={decreaseYear}>
+    <button on:click={() => changeYear(false)}>
       <img src={leftSvgrepo} alt="" />
     </button>
 
@@ -186,7 +209,7 @@
     <button on:click={increaseMonth}>
       <img src={rightArrow} alt="" />
     </button>
-    <button on:click={increaseYear}>
+    <button on:click={() => changeYear(true)}>
       <img src={rightSvgrepo} alt="" />
     </button>
   </div>
@@ -198,10 +221,14 @@
   </div>
 
   <div class="days-of-week">
-    {#each daysByWeek as week}
+    {#each daysByWeek as week, index}
       <div class="week">
-        {#each week as { day, isCurrentMonth }}
-          <span class={`${!isCurrentMonth ? "gray" : ""}`}>{day}</span>
+        {#each week as { day, isDisabled, isSelected }, subIndex}
+          <span
+            class={`${isDisabled && !isCurrentDate(day) ? "disabled" : ""} ${isCurrentDate(day) ? "current-date" : ""} ${isSelected ? 'selected': ''}`}
+            on:click={isDisabled ? null : () => setDate(day, index, subIndex)}
+            >{day?.getDate()}</span
+          >
         {/each}
       </div>
     {/each}

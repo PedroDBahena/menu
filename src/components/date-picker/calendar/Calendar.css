@@ -57,19 +57,34 @@
         border-radius: 50%; /* Forma circular */
         transition: box-shadow 0.3s ease, background-color 0.3s ease; /* Transición suave */
 
-        &.gray {
-          color: #c1c1c1;
+        &:hover {
+          color: inherit;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          background-color: rgba(0, 0, 0, 0.05);
         }
 
-        &:hover {
-          color: inherit; /* Mantener color original */
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Sombra al pasar el puntero */
-          background-color: rgba(
-            0,
-            0,
-            0,
-            0.05
-          ); /* Fondo sutil al hacer hover */
+        &.disabled {
+          color: #c1c1c1;
+          cursor: not-allowed;
+        }
+
+
+        &.current-date {
+          border: 1px solid #387d9e;
+
+          &:hover {
+            box-shadow: 0 4px 8px rgba(56, 125, 158);
+          }
+        }
+
+        &.selected {
+          background-color: rgb(56, 125, 158);
+          color: white;
+
+          &:hover {
+            color: white;
+            box-shadow: 0 4px 8px rgb(56, 125, 158);
+          }
         }
       }
     }
