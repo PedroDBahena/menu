@@ -5,6 +5,6 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	base: 'menu',
 	build: {
-		outDir: 'dist', // Asegúrate de que esté configurado correctamente
+		outDir: '.svelte-kit/output', // Asegúrate de que esté configurado correctamente
 	},
 });
