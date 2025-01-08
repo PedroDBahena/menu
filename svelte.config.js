@@ -8,7 +8,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		paths: {
-			ase: process.env.NODE_ENV === 'production' ? '/menu' : '',
+			bnase: process.env.NODE_ENV === 'production' ? '/menu' : '',
 		}
 	}
 };
