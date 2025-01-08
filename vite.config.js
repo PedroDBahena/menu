@@ -3,5 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
-	base: 'menu'
+	base: 'menu',
+	build: {
+		outDir: 'dist', // Asegúrate de que esté configurado correctamente
+	},
 });
