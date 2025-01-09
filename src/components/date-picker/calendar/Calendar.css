@@ -89,6 +89,10 @@
     }
   }
 
+  & > .time {
+    text-align: center;
+  }
+
   & > .buttons {
     display: flex;
     flex-direction: row;

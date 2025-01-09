@@ -5,6 +5,7 @@
   import rightArrow from "../../../images/rightArrow.svg";
   import rightSvgrepo from "../../../images/rightSvgrepo.svg";
   import { onMount } from "svelte";
+  import Time from "./time/Time.svelte";
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
@@ -233,6 +234,8 @@
       </div>
     {/each}
   </div>
+
+  <Time></Time>
 
   <div class="buttons">
     <button class="btn-cancel">Cancelar</button>
