@@ -4,7 +4,7 @@
   import leftArrow from "../../../images/leftArrow.svg";
   import rightArrow from "../../../images/rightArrow.svg";
   import rightSvgrepo from "../../../images/rightSvgrepo.svg";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
@@ -225,12 +225,17 @@
       <div class="week">
         {#each week as { day, isDisabled, isSelected }, subIndex}
           <span
-            class={`${isDisabled && !isCurrentDate(day) ? "disabled" : ""} ${isCurrentDate(day) ? "current-date" : ""} ${isSelected ? 'selected': ''}`}
+            class={`${isDisabled && !isCurrentDate(day) ? "disabled" : ""} ${isCurrentDate(day) ? "current-date" : ""} ${isSelected ? "selected" : ""}`}
             on:click={isDisabled ? null : () => setDate(day, index, subIndex)}
             >{day?.getDate()}</span
           >
         {/each}
       </div>
     {/each}
+  </div>
+
+  <div class="buttons">
+    <button class="btn-cancel">Cancelar</button>
+    <button class="btn-accept">Aceptar</button>
   </div>
 </div>
