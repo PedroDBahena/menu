@@ -25,6 +25,10 @@
   function showCalendar() {
     isShowCalendar = !isShowCalendar;
   }
+
+  function getSelectedDate(date) {
+    console.warn("Date", date?.detail);
+  }
 </script>
 
 <div id="datePicker">
@@ -35,7 +39,7 @@
   </div>
   {#if isShowCalendar}
     <div class="calendar">
-      <Calendar {months} {daysOfWeek}></Calendar>
+      <Calendar {months} {daysOfWeek} on:dateEmmiter={getSelectedDate}></Calendar>
     </div>
   {/if}
 </div>

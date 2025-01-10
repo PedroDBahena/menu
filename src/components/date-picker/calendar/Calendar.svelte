@@ -4,13 +4,16 @@
   import leftArrow from "../../../images/leftArrow.svg";
   import rightArrow from "../../../images/rightArrow.svg";
   import rightSvgrepo from "../../../images/rightSvgrepo.svg";
-  import { onMount } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import Time from "./time/Time.svelte";
 
   let currentMonth = new Date().getMonth();
   let currentYear = new Date().getFullYear();
   let currentDays = 0;
   let daysByWeek = [[], [], [], [], [], []];
+  let selectedDate = null;
+
+  const dispatch = createEventDispatcher();
 
   export let months;
   export let daysOfWeek;
@@ -181,11 +184,38 @@
 
   function setDate(date, index, subIndex) {
     generateCalendar();
+    selectedDate = date;
     daysByWeek[index][subIndex] = {
       day: date,
       isDisabled: false,
       isSelected: true,
     };
+  }
+
+  function getTime(time) {
+    if (selectedDate instanceof Date && time) {
+      const newDate = new Date(selectedDate);
+
+      const { hour, minutes, currentPeriod } = time?.detail;
+
+      // DOCS: Convierte el formato de las horas de 12h a 24h
+      const hour24Format =
+        currentPeriod === "pm" ? (hour % 12) + 12 : hour % 12;
+
+      // DOCS: Convierte el formato de los minutos de 12h a 24h
+      const minutes24Format = parseInt(minutes, 10);
+
+      newDate?.setHours(hour24Format, minutes24Format);
+      selectedDate = newDate;
+    }
+  }
+
+  function calculateTime() {}
+
+  function emitDate() {
+    if (selectedDate) {
+      dispatch("dateEmmiter", selectedDate);
+    }
   }
 
   onMount(async () => {
@@ -235,10 +265,12 @@
     {/each}
   </div>
 
-  <Time></Time>
+  <div class="time">
+    <Time on:timeEmmiter={getTime}></Time>
+  </div>
 
   <div class="buttons">
     <button class="btn-cancel">Cancelar</button>
-    <button class="btn-accept">Aceptar</button>
+    <button class="btn-accept" on:click={() => emitDate()}>Aceptar</button>
   </div>
 </div>

@@ -90,7 +90,7 @@
   }
 
   & > .time {
-    text-align: center;
+    padding-top: 0.5rem;
   }
 
   & > .buttons {
